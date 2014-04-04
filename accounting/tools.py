@@ -25,12 +25,13 @@ class PolicyAccounting(object):
         if not self.policy.invoices:
             self.make_invoices()
 
+    # P4: Returns account balance after a certain date
     def return_account_balance(self, date_cursor=None):
         if not date_cursor:
             date_cursor = datetime.now().date()
-
+        # P3: Changed date_cursor to be <= date sent
         invoices = Invoice.query.filter_by(policy_id=self.policy.id)\
-                                .filter(Invoice.bill_date < date_cursor)\
+                                .filter(date_cursor <= Invoice.bill_date)\
                                 .order_by(Invoice.bill_date)\
                                 .all()
         due_now = 0
@@ -44,7 +45,8 @@ class PolicyAccounting(object):
             due_now -= payment.amount_paid
 
         return due_now
-
+    
+    # P4: Makes a payment args( contact_id, date, amount paid)
     def make_payment(self, contact_id=None, date_cursor=None, amount=0):
         if not date_cursor:
             date_cursor = datetime.now().date()
@@ -71,8 +73,19 @@ class PolicyAccounting(object):
          being paid in full. However, it has not necessarily
          made it to the cancel_date yet.
         """
+        """
+        Problem 7:  This code needs to check the role of the person making a 
+        payment with the contacts table.  If the role is agent then payment
+        can be made.  
+        """
         pass
 
+    """
+    Problem 4:  This code checks if the current date is past the cancel date.
+    Problem 9:  When returned as canceled the status needs to be changed to
+    canceled.  Could possibly create a canceled policies table that would list
+    the reason and the date canceled.
+    """
     def evaluate_cancel(self, date_cursor=None):
         if not date_cursor:
             date_cursor = datetime.now().date()
@@ -87,25 +100,54 @@ class PolicyAccounting(object):
                 continue
             else:
                 print "THIS POLICY SHOULD HAVE CANCELED"
+                self.policy.status = "Canceled"
                 break
         else:
             print "THIS POLICY SHOULD NOT CANCEL"
 
+    """
+    Problem 8: Need to get the current invoices, mark paid as deleted,
+    return_account_balance then make_invoices with the remaining amount.
+    billing_schedule needs to be changed under policies.
+    
+    def change_billing_schedule(self, schedule_change):
+        if not date_cursor:
+            date_cursor = datetime.now().date()
 
+        invoices = Invoice.query.filter_by(policy_id=self.policy.id)\
+                        .filter(Invoice.bill_date < date_cursor)\
+                        .order_by(Invoice.bill_date)\
+                        .all()
+                        
+        self.policy.billing_schedule = schedule_change
+        
+        for invoice in invoices:
+            self.invoices.deleted = 1
+            
+        balance = self.return_account_balance(date_cursor)
+        make_invoices() # Remake the invoices
+    """
+    
+    # P4: Creates invoices based on the policies billing schedule
     def make_invoices(self):
         for invoice in self.policy.invoices:
             invoice.delete()
-
-        billing_schedules = {'Annual': None, 'Semi-Annual': 3, 'Quarterly': 4, 'Monthly': 12}
+        """
+        Problem 5: Changed Semi-annual to Two-Pay in order for Policy Four to be
+        created. Two-Pay changed to 2 to reflect two payments for the year 
+        instead of 3
+        """
+        billing_schedules = {'Annual': None, 'Two-Pay': 2, 'Quarterly': 4, 'Monthly': 12}
 
         invoices = []
         first_invoice = Invoice(self.policy.id,
                                 self.policy.effective_date, #bill_date
                                 self.policy.effective_date + relativedelta(months=1), #due
-                                self.policy.effective_date + relativedelta(months=1, days=14), #cancel
-                                self.policy.annual_premium)
+                                self.policy.effective_date + relativedelta(months=1, days=14), #cancel 
+                                self.policy.annual_premium) # amount due
         invoices.append(first_invoice)
-
+        
+        # Annual needs no additional calculations
         if self.policy.billing_schedule == "Annual":
             pass
         elif self.policy.billing_schedule == "Two-Pay":
@@ -131,7 +173,7 @@ class PolicyAccounting(object):
                                   self.policy.annual_premium / billing_schedules.get(self.policy.billing_schedule))
                 invoices.append(invoice)
         elif self.policy.billing_schedule == "Monthly":
-            # Problem 1
+            # P1: This line divides the amount by the # of months
             first_invoice.amount_due = first_invoice.amount_due / billing_schedules.get(self.policy.billing_schedule)
             # Create Invoices for monthly billing
             for i in range(1, billing_schedules.get(self.policy.billing_schedule)):
@@ -185,6 +227,8 @@ def insert_data():
     policies = []
     p1 = Policy('Policy One', date(2015, 1, 1), 365)
     p1.billing_schedule = 'Annual'
+    # P6: add insured name
+    p1.named_insured = john_doe_insured.id
     p1.agent = bob_smith.id
     policies.append(p1)
 
@@ -199,6 +243,13 @@ def insert_data():
     p3.named_insured = ryan_bucket.id
     p3.agent = john_doe_agent.id
     policies.append(p3)
+    
+    # P5: add new policy
+    p4 = Policy('Policy Four', date(2014, 2, 1), 500)
+    p4.billing_schedule = 'Two-Pay'
+    p4.named_insured = ryan_bucket.id
+    p4.agent = john_doe_agent.id
+    policies.append(p4)
 
     for policy in policies:
         db.session.add(policy)

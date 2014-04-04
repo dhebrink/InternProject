@@ -75,7 +75,7 @@ The Problems:
 
  3. Oh no, one of the test suites is completely failing! Figure out what caused this and fix it.
 
- 4. Geez, whoever wrote PolicyAccounting sure didn't like making comments. Would you add
+ 4. **Geez, whoever wrote PolicyAccounting sure didn't like making comments. Would you add
     some comments to the code and functions? You could even add some logging if you'd like.
 
  5. Mary Sue Client is having problems creating a new policy. Will you help her?
@@ -91,13 +91,13 @@ The Problems:
  6. The agent Bob Smith called Mary Sue Client furious because his insured, John Doe, couldn't
     pay off Policy One! Please help her out!
 
- 7. Did you notice that an invoice's cancel date is two weeks after the due date? For these two
+ 7. **Did you notice that an invoice's cancel date is two weeks after the due date? For these two
     weeks, the policy's status is cancellation pending due to non-pay, but the system doesn't
     account for this in any way. If a policy is in cancellation pending due to non_pay, only an
     agent should be able to make a payment on it. There is a code stub for
     evaluate_cancellation_pending_due_to_non_pay get you started.
 
- 8. You know what'd be great? Being able to change the billing schedule in the middle of a policy.
+ 8. ***You know what'd be great? Being able to change the billing schedule in the middle of a policy.
     For example, Policy Two is on quarterly and the insured (Anna White) has already paid off the
     first invoice. Making a payment for $400 was kind of a stretch for her, so in the future she'd
     like to have monthly invoices. Please mark those old quarterly invoices as deleted and switch

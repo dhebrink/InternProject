@@ -88,6 +88,12 @@ class TestReturnAccountBalance(unittest.TestCase):
             db.session.delete(payment)
         db.session.commit()
 
+    """
+    Problem 3: The return_account_balance filter was wrong.  I moved the date
+    sent (effective date) to be <= to the bill_date to return the balance after
+    the effective date.
+    Quarterly and monthly would be added up so they both need to be 1200
+    """
     def test_annual_on_eff_date(self):
         self.policy.billing_schedule = "Annual"
         pa = PolicyAccounting(self.policy.id)
@@ -96,14 +102,21 @@ class TestReturnAccountBalance(unittest.TestCase):
     def test_quarterly_on_eff_date(self):
         self.policy.billing_schedule = "Quarterly"
         pa = PolicyAccounting(self.policy.id)
-        self.assertEquals(pa.return_account_balance(date_cursor=self.policy.effective_date), 300)
+        self.assertEquals(pa.return_account_balance(date_cursor=self.policy.effective_date), 1200)
+        
+        # P2: Added monthly tests
+    def test_monthly_on_eff_date(self):
+        self.policy.billing_schedule = "Monthly"
+        pa = PolicyAccounting(self.policy.id)
+        self.assertEquals(pa.return_account_balance(date_cursor=self.policy.effective_date), 1200)
 
     def test_quarterly_on_last_installment_bill_date(self):
         self.policy.billing_schedule = "Quarterly"
         pa = PolicyAccounting(self.policy.id)
         invoices = Invoice.query.filter_by(policy_id=self.policy.id)\
                                 .order_by(Invoice.bill_date).all()
-        self.assertEquals(pa.return_account_balance(date_cursor=invoices[3].bill_date), 1200)
+        # This should equal 300 for one quarterly installment not 1200
+        self.assertEquals(pa.return_account_balance(date_cursor=invoices[3].bill_date), 300)
 
     def test_quarterly_on_second_installment_bill_date_with_full_payment(self):
         self.policy.billing_schedule = "Quarterly"
