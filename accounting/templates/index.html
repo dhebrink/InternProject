@@ -1,4 +1,52 @@
 {% extends "layout.html" %}
 {% block content %}
-<p>Your server is working.</p>
+
+    <form action="/" method="POST" >
+
+        <label for="policy_num">Policy Number</label>
+        <input type="text" id="policy_num" name="policy_num" />
+
+        <label for="date">Date</label>
+        <input type="datetime" id="date" name="date" />
+
+    </form>
+    <br/>
+
+    <div class="container">
+
+        <table border="1">
+            <caption>Invoices</caption>
+            <tr>
+                <th>Bill Date</th>
+                <th>Due Date</th>
+                <th>Cancel Date</th>
+                <th>Amount Due</th>
+            </tr>
+            {% for invoice in invoices %}
+            <tr>
+                <td>{{ invoice.bill_date }}</td>
+                <td>{{ invoice.due_date }}</td>
+                <td>{{ invoice.cancel_date }}</td>
+                <td>{{ invoice.amount_due }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+<br/>
+        <table border="1">
+            <caption>Payments</caption>
+            <tr>
+                <th>Date Made</th>
+                <th>Amount Paid</th>
+            </tr>
+            {% for payment in payments %}
+            <tr>
+                <td>{{ payment.transaction_date }}</td>
+                <td>{{ paymeny.amount_paid }}</td>
+            </tr>
+            {% endfor %}
+
+        </table>
+
+    </div>
+
 {% endblock %}

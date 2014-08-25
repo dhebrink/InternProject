@@ -99,7 +99,8 @@ class PolicyAccounting(object):
 
         # Get invoice tied to self.policy that is in cancellation range
         invoice = Invoice.query.filter_by(policy_id = self.policy.id)\
-                                .filter(Invoice.bill_date <= date_cursor && Invoice.cancel_date > date_cursor)\
+                                .filter(Invoice.bill_date <= date_cursor)\
+                                .filter(Invoice.cancel_date > date_cursor)\
                                 .order_by(Invoice.bill_date).one()
 
         # If the account balance is 0 as of the day before the cancel date,
