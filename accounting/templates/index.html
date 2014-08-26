@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block content %}
 
-    <form action="/" method="POST" >
+    <form action="" method="POST" >
 
         <label for="policy_num">Policy Number</label>
         <input type="text" id="policy_num" name="policy_num" />
@@ -9,13 +9,15 @@
         <label for="date">Date</label>
         <input type="datetime" id="date" name="date" />
 
+        <input type="submit" val="Search" />
     </form>
+    <br/>
     <br/>
 
     <div class="container">
 
         <table border="1">
-            <caption>Invoices</caption>
+            <caption>Invoices: {{ message }}</caption>
             <tr>
                 <th>Bill Date</th>
                 <th>Due Date</th>
@@ -31,7 +33,8 @@
             </tr>
             {% endfor %}
         </table>
-<br/>
+    <br/>
+    <br/>
         <table border="1">
             <caption>Payments</caption>
             <tr>
@@ -41,11 +44,16 @@
             {% for payment in payments %}
             <tr>
                 <td>{{ payment.transaction_date }}</td>
-                <td>{{ paymeny.amount_paid }}</td>
+                <td>{{ payment.amount_paid }}</td>
             </tr>
             {% endfor %}
 
         </table>
+    <br/>
+    <br/>
+
+    <h3>Balance: {{ balance }}</h3>
+
 
     </div>
 
