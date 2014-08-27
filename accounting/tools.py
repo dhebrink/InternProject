@@ -216,6 +216,37 @@ class PolicyAccounting(object):
             db.session.add(invoice)
         db.session.commit()
 
+
+    def change_billing_schedule(self, billing_schedule, date_cursor=None):
+        """
+        Use this method to change a policy's billing schedule.
+        
+        """
+        if not date_cursor:
+            date_cursor = datetime.now().date()
+
+        invoices = Invoice.query.filter_by(policy_id = self.policy.id)\
+                                .filter(Invoice.bill_date <= date_cursor)\
+                                .order_by(Invoice.bill_date).all()
+        for invoice in invoices:
+            invoice.deleted = True
+
+        new_invoices = []
+
+        self.policy.billing_schedule = billing_schedule
+        if billing_schedule == 'Annual':
+            pass
+        elif billing_schedule == 'Two-Pay':
+            pass
+        elif billing_schedule == 'Quarterly':
+            pass
+        elif billing_schedule == 'Monthly':
+            pass
+        else:
+            print "You have entered an invalid billing schedule"
+        
+
+
 ################################
 # The functions below are for the db and 
 # shouldn't need to be edited.
