@@ -73,8 +73,16 @@ class PolicyAccounting(object):
         # If contact_id not passed into the function, assign to self.policy.named_insured
         if not contact_id:
             try:
-                contact_id = self.policy.named_insured
+                if self.policy.named_insured:
+                    contact_id = self.policy.named_insured
+                else:
+                    contact_id = self.policy.agent
             except:
+                # Payment should always be assigned to named_insured?
+                # Not sure if contact should be agent, or return error message.
+                
+                #contact_id = self.policy.agent
+                #return "No named_insured assigned to this policy. Cannot make payment."
                 pass
 
         payment = Payment(self.policy.id,
