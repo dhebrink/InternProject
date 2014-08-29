@@ -142,6 +142,27 @@ class PolicyAccounting(object):
             print "THIS POLICY SHOULD NOT CANCEL"
 
 
+	def cancel_policy(self, reason=None):
+		"""
+		Cancels a policy and stores some descriptive data about when and why.
+		"""
+		# if a policy is canceled, all invoices should be marked as deleted
+		invoices = Invoice.query.filter_by(policy_id = self.policy.id).all()
+
+		for invoice in invoices:
+			invoice.deleted = True
+
+		# Change Policy 'canceled' status to True
+		self.policy.status = 'Canceled'
+		# Mark the date it was canceled
+		self.policy.cancel_date = datetime.now().date()
+		# Save reason for cancellation
+		self.policy.cancel_description = reason
+
+		# Save changes
+		db.session.commit()
+
+
     def make_invoices(self):
         """
         Populates self.policy.invoices based on the selected billing schedule.
@@ -201,14 +222,14 @@ class PolicyAccounting(object):
             # Alter the first invoice's amount due to reflect a monthly payment
             first_invoice.amount_due = first_invoice.amount_due / frequency
             for i in range(1, frequency):
-                months_after_eff_date = i	# no multiple here for Monthly. "frequency" should be 12
-	        bill_date = self.policy.effective_date + relativedelta(months=months_after_eff_date)
-	        invoice = Invoice(self.policy.id,
-		                  bill_date,   # bill date
-		                  bill_date + relativedelta(months=1),  # due date
-                                  bill_date + relativedelta(months=1, days=14),   # cancel date
-                                  self.policy.annual_premium / frequency)   # amount due
-	        invoices.append(invoice)
+				months_after_eff_date = i	# no multiple here for Monthly. "frequency" should be 1
+				bill_date = self.policy.effective_date + relativedelta(months=months_after_eff_date)
+				invoice = Invoice(self.policy.id,
+								bill_date,   # bill date
+								bill_date + relativedelta(months=1),  # due date
+								bill_date + relativedelta(months=1, days=14),   # cancel date
+								self.policy.annual_premium / frequency)   # amount due
+				invoices.append(invoice)
         else:
             print "You have chosen a bad billing schedule."
 
@@ -226,7 +247,6 @@ class PolicyAccounting(object):
             date_cursor = datetime.now().date()
 
         invoices = Invoice.query.filter_by(policy_id = self.policy.id)\
-                                .filter(Invoice.bill_date <= date_cursor)\
                                 .order_by(Invoice.bill_date).all()
         for invoice in invoices:
             invoice.deleted = True
@@ -235,16 +255,54 @@ class PolicyAccounting(object):
 
         self.policy.billing_schedule = billing_schedule
         if billing_schedule == 'Annual':
-            pass
+			new_invoice = Invoice(self.policy.id,
+								self.policy.effective_date,		# bill_date
+								self.policy.effective_date + relativedelta(months=1),	# due_date
+								self.policy.effective_date + relativedelta(months=1, days=14),	# cancel_date
+								self.policy.annual_premium)		# amount_due
+			new_invoices.append(new_invoice)
         elif billing_schedule == 'Two-Pay':
-            pass
+            frequency = 2
+            for i in range(1, frequency + 1):
+				months_after_eff_date = i*6
+				bill_date = self.policy.effective_date + relativedelta(months=months_after_eff_date)
+				new_invoice = Invoice(self.policy.id,
+									bill_date,	# bill_date
+									bill_date + relativedelta(months=1),	# due_date
+									bill_date + relativedelta(months=1, days=14),	# cancel_date
+									self.policy.annual_premium / frequency)	# amount_due
+				new_invoices.append(new_invoice)
         elif billing_schedule == 'Quarterly':
-            pass
+            frequency = 4
+            for i in range(1, frequency + 1):
+                months_after_eff_date = i*3
+                bill_date = self.policy.effective_date + relativedelta(months=months_after_eff_date)
+                new_invoice = Invoice(self.policy.id,
+                                    bill_date,  # bill_date
+                                    bill_date + relativedelta(months=1),    # due_date
+                                    bill_date + relativedelta(months=1, days=14),   # cancel_date
+                                    self.policy.annual_premium / frequency) # amount_due
+                new_invoices.append(new_invoice)
         elif billing_schedule == 'Monthly':
-            pass
+            frequency = 12
+            for i in range(1, frequency + 1):
+                months_after_eff_date = i
+                bill_date = self.policy.effective_date + relativedelta(months=months_after_eff_date)
+                new_invoice = Invoice(self.policy.id,
+                                    bill_date,  # bill_date
+                                    bill_date + relativedelta(months=1),    # due_date
+                                    bill_date + relativedelta(months=1, days=14),   # cancel_date
+                                    self.policy.annual_premium / frequency) # amount_due
+                new_invoices.append(new_invoice)
         else:
             print "You have entered an invalid billing schedule"
         
+        for invoice in new_invoices:
+            db.session.add(invoice)
+        db.session.commit()
+
+		# all payments made on the policy are still valid, return the account balance with new billing schedule
+        return self.return_account_balance(date_cursor)
 
 
 ################################
