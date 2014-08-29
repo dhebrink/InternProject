@@ -61,6 +61,21 @@ class TestBillingSchedules(unittest.TestCase):
         self.assertEquals(len(self.policy.invoices), 12)
         self.assertEquals(self.policy.invoices[0].amount_due, self.policy.annual_premium / 12)
 
+	def test_change_billing_schedule(self):
+		self.policy.billing_schedule = "Quarterly"
+		self.assertFalse(self.policy.invoices)
+		pa = PolicyAccounting(self.policy.id)
+		self.assertEquals(len(self.policy.invoices), 4)
+		self.policy.billing_schedule = "Monthly"
+		self.assertEquals(len(self.policy.invoices), 12)
+
+	def test_cancel_policy(self):
+		pa = PolicyAccounting(self.policy.id)
+		self.assertFalse(self.policy.canceled)
+		pa.cancel_policy(reason="Testing Cancel")
+		self.assertEquals(self.policy.cancel_date, datetime.now().date())
+		self.assertTrue(self.policy.canceled)
+
 class TestReturnAccountBalance(unittest.TestCase):
 
     @classmethod

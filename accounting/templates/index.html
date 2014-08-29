@@ -1,13 +1,18 @@
 {% extends "layout.html" %}
 {% block content %}
 
+<div class="jumbo">
+	<h1>Search For a Policy!</h1>
+</div>
+<br/>
+
     <form action="" method="POST" >
 
         <label for="policy_num">Policy Number</label>
-        <input type="text" id="policy_num" name="policy_num" />
+        <input type="text" id="policy_num" name="policy_num" value="{{ policy_number }}" />
 
         <label for="date">Date</label>
-        <input type="datetime" id="date" name="date" />
+        <input type="datetime" id="date" name="date" value="{{ date_posted }}" />
 
         <input type="submit" val="Search" />
     </form>

@@ -26,20 +26,7 @@ def index():
         
         pa = PolicyAccounting(policy.id)
         amt = pa.return_account_balance(date_cursor)
-        return render_template('index.html', invoices = invoices, payments = payments, balance = amt)
+        return render_template('index.html', policy_number=policy_num, date_posted=date_cursor, invoices=invoices, payments=payments, balance=amt)
     else:
         return render_template('index.html', invoices = [], payments = [])
-
-@app.route("/search", methods=['GET','POST'])
-def search():
-    policy_num = request.form['policy_number']
-    date_cursor = request.form['date']
-    policy = Policy.query.filter(policy_number = policy_num).one()
-    invoices = Invoice.query.filter_by(policy_id = policy.id)\
-                            .filter(Invoice.bill_date <= date_cursor)\
-                            .all()
-    return redirect(url_for('index'))
-
-
-
 

@@ -18,6 +18,9 @@ class Policy(db.Model):
     named_insured = db.Column(u'named_insured', db.INTEGER(), db.ForeignKey('contacts.id'))
     agent = db.Column(u'agent', db.INTEGER(), db.ForeignKey('contacts.id'))
 
+    cancel_description = db.Column(u'cancel_description', db.VARCHAR(length=128))
+    cancel_date = db.Column(u'cancel_date', db.DATE())
+
     def __init__(self, policy_number, effective_date, annual_premium):
         self.policy_number = policy_number
         self.effective_date = effective_date
