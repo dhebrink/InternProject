@@ -61,20 +61,25 @@ class TestBillingSchedules(unittest.TestCase):
         self.assertEquals(len(self.policy.invoices), 12)
         self.assertEquals(self.policy.invoices[0].amount_due, self.policy.annual_premium / 12)
 
-	def test_change_billing_schedule(self):
-		self.policy.billing_schedule = "Quarterly"
-		self.assertFalse(self.policy.invoices)
-		pa = PolicyAccounting(self.policy.id)
-		self.assertEquals(len(self.policy.invoices), 4)
-		self.policy.billing_schedule = "Monthly"
-		self.assertEquals(len(self.policy.invoices), 12)
+    def test_change_billing_schedule(self):
+        self.policy.billing_schedule = "Quarterly"
+        self.assertFalse(self.policy.invoices)
+        pa = PolicyAccounting(self.policy.id)
+        self.assertEquals(len(self.policy.invoices), 4)
+        prev_invoice_count = len(self.policy.invoices)
+        pa.change_billing_schedule('Monthly')
+        self.assertEquals(len(self.policy.invoices), 12 + prev_invoice_count)
 
-	def test_cancel_policy(self):
-		pa = PolicyAccounting(self.policy.id)
-		self.assertFalse(self.policy.canceled)
-		pa.cancel_policy(reason="Testing Cancel")
-		self.assertEquals(self.policy.cancel_date, datetime.now().date())
-		self.assertTrue(self.policy.canceled)
+    def test_cancel_policy(self):
+        pa = PolicyAccounting(self.policy.id)
+        # Check value before canceling
+        self.assertEquals(self.policy.status, 'Active')
+        # Cancel the policy and set approriate fields
+        pa.cancel_policy(reason="Testing Cancel")
+        # Check that date field was set correctly
+        self.assertEquals(self.policy.cancel_date, datetime.now().date())
+        # Check that policy's status changed
+        self.assertEquals(self.policy.status, 'Canceled')
 
 class TestReturnAccountBalance(unittest.TestCase):
 

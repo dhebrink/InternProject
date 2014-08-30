@@ -142,25 +142,25 @@ class PolicyAccounting(object):
             print "THIS POLICY SHOULD NOT CANCEL"
 
 
-	def cancel_policy(self, reason=None):
-		"""
-		Cancels a policy and stores some descriptive data about when and why.
-		"""
-		# if a policy is canceled, all invoices should be marked as deleted
-		invoices = Invoice.query.filter_by(policy_id = self.policy.id).all()
+    def cancel_policy(self, reason=None):
+        """
+        Cancels a policy and stores some descriptive data about when and why.
+        """
+        # if a policy is canceled, all invoices should be marked as deleted
+        invoices = Invoice.query.filter_by(policy_id = self.policy.id).all()
 
-		for invoice in invoices:
-			invoice.deleted = True
+        for invoice in invoices:
+            invoice.deleted = True
 
-		# Change Policy 'canceled' status to True
-		self.policy.status = 'Canceled'
-		# Mark the date it was canceled
-		self.policy.cancel_date = datetime.now().date()
-		# Save reason for cancellation
-		self.policy.cancel_description = reason
+        # Change Policy 'canceled' status to True
+        self.policy.status = 'Canceled'
+        # Mark the date it was canceled
+        self.policy.cancel_date = datetime.now().date()
+        # Save reason for cancellation
+        self.policy.cancel_description = reason
 
-		# Save changes
-		db.session.commit()
+        # Save changes
+        db.session.commit()
 
 
     def make_invoices(self):
@@ -246,9 +246,8 @@ class PolicyAccounting(object):
         if not date_cursor:
             date_cursor = datetime.now().date()
 
-        invoices = Invoice.query.filter_by(policy_id = self.policy.id)\
-                                .order_by(Invoice.bill_date).all()
-        for invoice in invoices:
+        # Mark all invoices tied to the policy as 'deleted'
+        for invoice in self.policy.invoices:
             invoice.deleted = True
 
         new_invoices = []
@@ -267,10 +266,10 @@ class PolicyAccounting(object):
 				months_after_eff_date = i*6
 				bill_date = self.policy.effective_date + relativedelta(months=months_after_eff_date)
 				new_invoice = Invoice(self.policy.id,
-									bill_date,	# bill_date
-									bill_date + relativedelta(months=1),	# due_date
-									bill_date + relativedelta(months=1, days=14),	# cancel_date
-									self.policy.annual_premium / frequency)	# amount_due
+                                    bill_date,	# bill_date
+                                    bill_date + relativedelta(months=1),	# due_date
+                                    bill_date + relativedelta(months=1, days=14),	# cancel_date
+                                    self.policy.annual_premium / frequency)	# amount_due
 				new_invoices.append(new_invoice)
         elif billing_schedule == 'Quarterly':
             frequency = 4
