@@ -44,6 +44,7 @@ class PolicyAccounting(object):
         # Results are ordered by ascending bill_date
         invoices = Invoice.query.filter_by(policy_id=self.policy.id)\
                                 .filter(Invoice.bill_date <= date_cursor)\
+                                .filter(Invoice.status == 'Active')\
                                 .order_by(Invoice.bill_date)\
                                 .all()
 
@@ -222,14 +223,14 @@ class PolicyAccounting(object):
             # Alter the first invoice's amount due to reflect a monthly payment
             first_invoice.amount_due = first_invoice.amount_due / frequency
             for i in range(1, frequency):
-				months_after_eff_date = i	# no multiple here for Monthly. "frequency" should be 1
-				bill_date = self.policy.effective_date + relativedelta(months=months_after_eff_date)
-				invoice = Invoice(self.policy.id,
-								bill_date,   # bill date
-								bill_date + relativedelta(months=1),  # due date
-								bill_date + relativedelta(months=1, days=14),   # cancel date
-								self.policy.annual_premium / frequency)   # amount due
-				invoices.append(invoice)
+                months_after_eff_date = i	# no multiple here for Monthly. "frequency" should be 1
+                bill_date = self.policy.effective_date + relativedelta(months=months_after_eff_date)
+                invoice = Invoice(self.policy.id,
+                                bill_date,   # bill date
+                                bill_date + relativedelta(months=1),  # due date
+                                bill_date + relativedelta(months=1, days=14),   # cancel date
+                                self.policy.annual_premium / frequency)   # amount due
+                invoices.append(invoice)
         else:
             print "You have chosen a bad billing schedule."
 
@@ -254,23 +255,23 @@ class PolicyAccounting(object):
 
         self.policy.billing_schedule = billing_schedule
         if billing_schedule == 'Annual':
-			new_invoice = Invoice(self.policy.id,
-								self.policy.effective_date,		# bill_date
-								self.policy.effective_date + relativedelta(months=1),	# due_date
-								self.policy.effective_date + relativedelta(months=1, days=14),	# cancel_date
-								self.policy.annual_premium)		# amount_due
-			new_invoices.append(new_invoice)
+            new_invoice = Invoice(self.policy.id,
+                                self.policy.effective_date,		# bill_date
+                                self.policy.effective_date + relativedelta(months=1),	# due_date
+                                self.policy.effective_date + relativedelta(months=1, days=14),	# cancel_date
+                                self.policy.annual_premium)		# amount_due
+            new_invoices.append(new_invoice)
         elif billing_schedule == 'Two-Pay':
             frequency = 2
             for i in range(1, frequency + 1):
-				months_after_eff_date = i*6
-				bill_date = self.policy.effective_date + relativedelta(months=months_after_eff_date)
-				new_invoice = Invoice(self.policy.id,
+                months_after_eff_date = i*6
+                bill_date = self.policy.effective_date + relativedelta(months=months_after_eff_date)
+                new_invoice = Invoice(self.policy.id,
                                     bill_date,	# bill_date
                                     bill_date + relativedelta(months=1),	# due_date
                                     bill_date + relativedelta(months=1, days=14),	# cancel_date
                                     self.policy.annual_premium / frequency)	# amount_due
-				new_invoices.append(new_invoice)
+                new_invoices.append(new_invoice)
         elif billing_schedule == 'Quarterly':
             frequency = 4
             for i in range(1, frequency + 1):
