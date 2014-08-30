@@ -19,6 +19,7 @@ def index():
         policy = Policy.query.filter(Policy.policy_number == policy_num).one()
         invoices = Invoice.query.filter_by(policy_id = policy.id)\
                                 .filter(Invoice.bill_date <= date_cursor)\
+                                .filter(Invoice.deleted == False)\
                                 .all()
         payments = Payment.query.filter_by(policy_id = policy.id)\
                                 .filter(Payment.transaction_date <= date_cursor)\
@@ -30,3 +31,16 @@ def index():
     else:
         return render_template('index.html', invoices = [], payments = [])
 
+@app.route("/policies", methods=['GET'])
+def get_policies():
+    policies = Policy.query.all()
+    return render_template('policies.html', policies = policies)
+
+@app.route("/getinvoices/<p_id>", methods=['GET'])
+def get_invoices(p_id):
+    invoices = Invoice.query.filter_by(policy_id = p_id).all()
+    payments = Payment.query.filter_by(policy_id = p_id).all()
+    pa = PolicyAccounting(p_id)
+    date_cursor = invoices[len(invoices)-1].cancel_date
+    amt = pa.return_account_balance(date_cursor)
+    return render_template('index.html', invoices=invoices, payments=payments, balance=amt)

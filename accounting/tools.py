@@ -44,7 +44,7 @@ class PolicyAccounting(object):
         # Results are ordered by ascending bill_date
         invoices = Invoice.query.filter_by(policy_id=self.policy.id)\
                                 .filter(Invoice.bill_date <= date_cursor)\
-                                .filter(Invoice.status == 'Active')\
+                                .filter(Invoice.deleted == False)\
                                 .order_by(Invoice.bill_date)\
                                 .all()
 

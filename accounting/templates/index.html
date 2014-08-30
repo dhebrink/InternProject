@@ -3,13 +3,19 @@
 
 <div class="jumbo">
 	<h1>Search For a Policy!</h1>
+
+    <p style="text-align: center;">
+        <em>
+           <a href="/policies">View all Policies</a> 
+        </em>
+    </p>
 </div>
 
-=======
 <br/>
 
+<div class="container">
 
-    <form action="" method="POST" >
+    <form action="/" method="POST" >
 
         <label for="policy_num">Policy Number</label>
         <input type="text" id="policy_num" name="policy_num" value="{{ policy_number }}" />
@@ -17,14 +23,16 @@
         <label for="date">Date</label>
         <input type="datetime" id="date" name="date" value="{{ date_posted }}" />
 
-        <input type="submit" val="Search" />
+        <input type="submit" value="Search" />
     </form>
+</div>
     <br/>
     <br/>
 
     <div class="container">
 
-        <table border="1">
+    {% if invoices %}
+        <table>
             <caption>Invoices: {{ message }}</caption>
             <tr>
                 <th>Bill Date</th>
@@ -41,9 +49,14 @@
             </tr>
             {% endfor %}
         </table>
+    {% else %}
+        <h4><em>No Invoices Found</em</h3>
+    {% endif %}
     <br/>
     <br/>
-        <table border="1">
+
+    {% if payments %}
+        <table>
             <caption>Payments</caption>
             <tr>
                 <th>Date Made</th>
@@ -57,11 +70,13 @@
             {% endfor %}
 
         </table>
+    {% else %}
+        <h4><em>No Payments Found</em></h3>
+    {% endif %}
     <br/>
     <br/>
 
     <h3>Balance: {{ balance }}</h3>
-
 
     </div>
 
