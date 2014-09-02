@@ -4,23 +4,25 @@
 <div class="jumbo">
 	<h1>Search For a Policy!</h1>
 
-    <p style="text-align: center;">
-        <em>
-           <a href="/policies">View all Policies</a> 
-        </em>
+    <p class="center">
+        <a href="/policies">View all Policies</a> 
     </p>
+<!--    <p class="center">
+        <a href="/newpolicy">Make a New Policy</a>
+    </p> -->
 </div>
 
 <br/>
 
 <div class="container">
+    <h3>Enter a Policy Number and a Date to view invoices and payments.</h3>
 
     <form action="/" method="POST" >
 
         <label for="policy_num">Policy Number</label>
         <input type="text" id="policy_num" name="policy_num" value="{{ policy_number }}" />
 
-        <label for="date">Date</label>
+        <label for="date">Date (yyyy-mm-dd)</label>
         <input type="datetime" id="date" name="date" value="{{ date_posted }}" />
 
         <input type="submit" value="Search" />

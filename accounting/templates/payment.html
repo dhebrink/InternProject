@@ -1,0 +1,26 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+<div class="jumbo">
+
+    <h3>Make a Payment!</h3>
+    <br/>
+</div>
+<br/>
+<div class="container">
+    
+    <form action="/makepayment" method="POST">
+
+        <label for="policy_num">Policy Number</label>
+        <input type="text" name="policy_num" id="policy_num" value="{{ policy_num }}" />
+
+        <label for="amount">Amount</label>
+        <input type="number" name="policy_num" id="amount" value="{{ amount }}" />
+
+        <input type="submit" value="Submit" />
+
+    </form>
+
+</div>
+
+{% endblock %}
