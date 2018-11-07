@@ -1,4 +1,4 @@
-SupportOps Software Engineering Intern Project
+Operations Engineering Project
 =====
 
 Getting started:
@@ -7,7 +7,7 @@ Getting started:
  - Fork this repo on Github. When you make a commit, please include which
    problem(s) that you were working on in the commit message. (See more info below.)
 
- - I highly reccommend running all this from a \*nix terminal.
+ - It is highly recommended to run all this from a \*nix terminal.
    If you don't have one currently set up, you can create an Ubuntu instance using Virtual Box.
 
  - Install the requirements for the project. They're all found in requirements.txt. You'll probably
@@ -15,7 +15,8 @@ Getting started:
 
  - Use python2.7
 
- - We're just using a sqlite3 db for this project. Run ```build_or_refresh_db()``` to populate it with the initial data. You might want to take a look at this data and the models before you get started. I personally use a SQLite Manager Add-On for Firefox to view the db, but you can use whatever.
+ - A sqlite3 db is used for this project. Run ```build_or_refresh_db()``` to populate it with the initial data.
+   You might want to take a look at this data and the models before you get started. A SQLite Manager Add-On for Firefox is a simple option to view the db, but the db browser is unimportant.
 
  - A little bit about the files and dirs in this project:
    - runserver.py will start the Flask server
@@ -27,7 +28,7 @@ Getting started:
 
  - Questions?
    Feel free to ask! 
-   Send an email to amanda@britecore.com
+   Send an email to the BriteCore contact that sent you this project.
 
 
 Requirements:
@@ -61,21 +62,21 @@ And some good things to know about writing Python:
 
 The Problems:
 =====
-(remember to put which problem(s) you're working on in your commit message!)
+Remember to put which problem(s) you're working on in your commit message!
+Keep your commit history to 1-commit-per-problem and start each commit message with the number of the issue being solved.
 
-**NOTE: Populate your database. Run the following function in the shell: ```build_or_refresh_db()``` Any time you think that your db is getting messed up, you can run this again to start from fresh.**
+**NOTE: Populate your database. Run the following function in the shell: ```build_or_refresh_db()``` Any time you think that your db is getting messed up, you can run this again to start from scratch.**
 
- 1. Policy Three (effective 1/1/2015) is on a monthly billing schedule,
-    the developers haven't gotten around to implementing monthly invoices,
+ 1. Policy Three (effective 1/1/2015) is on a monthly billing schedule.
+    The team hasn't gotten around to implementing monthly invoices,
     so please go ahead and do that now so that Policy Three can have some invoices.
 
  2. Now that you've written monthly invoices, you should probably write a unit test for it.
-    I recommend using Python's built-in unit test framework for this, but suggest running
-    your tests with nosetests.
+    I recommend using Python's built-in unit test framework for this, but run your tests with nosetests.
 
  3. Oh no, one of the test suites is completely failing! Figure out what caused this and fix it.
 
- 4. **Geez, whoever wrote PolicyAccounting sure didn't like making comments. Would you add
+ 4. Geez, whoever wrote PolicyAccounting sure didn't like making comments. Would you add
     some comments to the code and functions? You could even add some logging if you'd like.
 
  5. Mary Sue Client is having problems creating a new policy. Will you help her?
@@ -91,21 +92,22 @@ The Problems:
  6. The agent Bob Smith called Mary Sue Client furious because his insured, John Doe, couldn't
     pay off Policy One! Please help her out!
 
- 7. **Did you notice that an invoice's cancel date is two weeks after the due date? For these two
+ 7. Did you notice that an invoice's cancel date is two weeks after the due date? For these two
     weeks, the policy's status is cancellation pending due to non-pay, but the system doesn't
     account for this in any way. If a policy is in cancellation pending due to non_pay, only an
     agent should be able to make a payment on it. There is a code stub for
-    evaluate_cancellation_pending_due_to_non_pay get you started.
+    evaluate_cancellation_pending_due_to_non_pay to help get you started.
 
- 8. ***You know what'd be great? Being able to change the billing schedule in the middle of a policy.
+ 8. You know what'd be great? Being able to change the billing schedule in the middle of a policy.
+    Implement this schedule-changing functionality.
     For example, Policy Two is on quarterly and the insured (Anna White) has already paid off the
     first invoice. Making a payment for $400 was kind of a stretch for her, so in the future she'd
-    like to have monthly invoices. Please mark those old quarterly invoices as deleted and switch
-    her to monthly.
+    like to have monthly invoices. Those old quarterly invoices should be marked as deleted and switched
+    over to a new billing schedule.
 
  9. Mary Sue Client doesn't like the way that cancelling a policy works. It doesn't do
     anything other than print to the screen! She thinks that maybe the Policy's status
-    should change, and maybe even store the date that it canceled. It might also be nice to
+    should change, and maybe even store the date that it cancelled. It might also be nice to
     be able to store a description about why the policy cancelled. Well, really maybe she'd
     also like to be able to cancel policies for other reasons, like underwriting. Decide how
     to expand the cancellation logic and test it.
@@ -119,5 +121,9 @@ The Problems:
      it be more functional than pretty. If you can think of anything else that
      Mary Sue Client might find useful on the interface, feel free to add it.
 
- Bonus: If there's anything else bothering you about the code, go ahead and feel free to
- change it. Be sure to put "Bonus" in the commit message please. :)
+ **BONUS:**
+ If there's anything else bothering you about the code, go ahead and feel free to
+ change it. Make each additional update in its own commit and be sure to put "Bonus" in the commit message.
+
+
+When you are finished, submit a Pull Request to the `master` branch of this repository.
